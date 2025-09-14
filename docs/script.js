@@ -8,6 +8,17 @@ async function loadData() {
   return { images, groups };
 }
 
+// --- 強制キャッシュクリア ---
+function clearSVGCache() {
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('mermaidSVGCache_'))
+    .forEach(k => localStorage.removeItem(k));
+}
+
+// URLパラメータで強制クリア
+const params = new URLSearchParams(window.location.search);
+if(params.get('clearCache')==='1') clearSVGCache();
+
 // キャッシュ用ハッシュ
 async function fetchJSONHash(url) {
   const resp = await fetch(url);
@@ -248,8 +259,8 @@ async function main(){
 
   // PanZoom
   const params=new URLSearchParams(window.location.search);
-  const startX=params.has('x')?parseFloat(params.get('x')):426.1;
-  const startY=params.has('y')?parseFloat(params.get('y')):-3424.0;
+  const startX=params.has('x')?parseFloat(params.get('x')):0;
+  const startY=params.has('y')?parseFloat(params.get('y')):0;
   const startZoom=params.has('zoom')?parseFloat(params.get('zoom')):5.00;
   const panZoomInstance=svgPanZoom(svgElement,{zoomEnabled:true,panEnabled:true,controlIconsEnabled:false,minZoom:0.3,maxZoom:10,zoomScaleSensitivity:0.3,dblClickZoomEnabled:false});
   panZoomInstance.zoom(startZoom);
