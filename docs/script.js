@@ -1,7 +1,7 @@
 async function loadData() {
   const [imagesResponse, groupsResponse] = await Promise.all([
-    fetch('images.json'),
-    fetch('groups.json')
+    fetch('./images.json'),
+    fetch('./groups.json')
   ]);
 
   const images = await imagesResponse.json();
