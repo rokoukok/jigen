@@ -62,9 +62,9 @@ function safeId(name) {
   return "id_" + btoa(unescape(encodeURIComponent(name))).replace(/[^a-zA-Z0-9]/g, "");
 }
 
-const eraOrder = ["商","西周","春秋","戦国","秦","漢","近現代","コンピューター"];
-const eraColors = {"商":"#FFDAB9","西周":"#FFE4B5","春秋":"#FFFACD","戦国":"#E0FFFF","秦":"#AFEEEE","漢":"#ADD8E6","近現代":"#E6E6FA","コンピューター":"#F5DEB3"};
-const groupColors = {"商":"#FFB07C","西周":"#FFC47A","春秋":"#E6DFA2","戦国":"#B2E0E0","秦":"#90CCCC","漢":"#82BFE0","近現代":"#C0C0E6","コンピューター":"#D1B06B"};
+const eraOrder = ["商","西周","春秋","戦国","秦","漢","近代","コンピューター"];
+const eraColors = {"商":"#FFDAB9","西周":"#FFE4B5","春秋":"#FFFACD","戦国":"#E0FFFF","秦":"#AFEEEE","漢":"#ADD8E6","近代":"#E6E6FA","コンピューター":"#F5DEB3"};
+const groupColors = {"商":"#FFB07C","西周":"#FFC47A","春秋":"#E6DFA2","戦国":"#B2E0E0","秦":"#90CCCC","漢":"#82BFE0","近代":"#C0C0E6","コンピューター":"#D1B06B"};
 
 function parseEraScript(path) {
   const parts = path.split('/');
