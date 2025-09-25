@@ -553,7 +553,7 @@ export async function main(){
     minZoom: 0.5,
     maxZoom: 20,
     zoomScaleSensitivity: 0.3,
-    dblClickZoomEnabled: true
+    dblClickZoomEnabled: false
   });
   panZoomInstance.zoom(startZoom);
   panZoomInstance.pan({ x: startX, y: startY });
