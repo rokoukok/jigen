@@ -1,6 +1,85 @@
 body {
+  font-family: "";
+}
+.serif { font-family: "Times New Roman", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+.char-side-content .serif {
+  font-family: "Times New Roman", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* ヘッダー */
+#site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.6rem; /* ロゴを大きくしたのでヘッダ高さを拡張 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.8rem;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  z-index: 1300;
+}
+.site-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  white-space: nowrap;
   font-family: "Times New Roman", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
+.site-title a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000;
+  white-space: nowrap;
+  font-family: "Times New Roman", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+}
+.logo { height: 3rem; display: inline-block; }
+.header-controls { display: flex; align-items: center; gap: 0.6rem; }
+
+/* 検索バー（ヘッダー内に配置） */
+#search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  padding: 0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+#search-bar input[type="text"]{
+  min-width: 10ch;
+  max-width: 18ch;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+#search-bar button{
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+#search-bar button:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ヘッダと被らないようページ内容の上部に余白を確保 */
+body { padding-top: 3.6rem; padding-bottom: 1.6rem; } /* ヘッダ高さに合わせて余白を拡張 */
 
 .glyph-box {
   width: 50px;
@@ -19,47 +98,324 @@ body {
   object-fit: contain;
 }
 
-.string-node {
+.glyph-text {
   width: 50px;
   height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 32px;
+  font-size: 50px;
   font-weight: bold;
   text-align: center;
   margin: 0 auto;
   background: #fff;
   box-sizing: border-box;
   font-family: "Times New Roman", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  margin-bottom: 24px; /* glyph-box と続く行との間隔を広げる */
+  transform: translateY(-10px); /* 追加: 上にずらす（値を調整して好みの位置に合わせてください） */
 }
 
-#mermaid-tree {
-  width: 100%;
+/* mermaid が出力するラベル内の tspan の行間を広げる（ブラウザ依存） */
+.mermaid text tspan {
+  line-height: 2;
+  /* dy: 0.35em; */
+}
+
+/* フッター: 右下にクレジットを表示 */
+#site-footer{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.6rem; /* 固定高さに戻す */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 左側に最初の子（凡例）を寄せる */
+  padding: 0 0.8rem;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 -1px 8px rgba(0,0,0,0.06);
+  z-index: 1400; /* mermaid より上に表示 */
+}
+
+/* フッター内の凡例は左側に配置 */
+#graph-legend, #graph-arrow-legend {
+  margin: 0;
   height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.4rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: margin-left 0.18s ease, max-width 0.18s ease;
+  position: relative;
+  z-index: 1310;
+  font-size: 0.85rem;
+  line-height: 1;
+  /* 左寄せで伸びないようにする */
+  flex: 0 0 auto;
+}
+
+/* クレジットをフッター右端に寄せる */
+#credit-link {
+  font-size: 0.75rem;
+  color: #555;
+  text-decoration: none;
+  margin-left: auto; /* これで右端へ押し出す */
+  align-self: center;
+
+  /* 追加: 固定サイズ・改行禁止 */
+  display: inline-block;
+  width: 4rem;           /* 固定幅（必要に応じて調整） */
+  white-space: nowrap;   /* 改行を禁止 */
+  text-overflow: ellipsis;
+}
+
+#credit {
+  font-size: 0.75rem;
+  color: #555;
+  text-decoration: none;
+  align-self: center;
+
+  /* 追加: 固定サイズ・改行禁止 */
+  display: inline-block;
+  white-space: nowrap;   /* 改行を禁止 */
+  text-overflow: ellipsis;
+}
+
+/* 凡例をフッター高さに合わせる（フッター内に append される前提） */
+#graph-legend, #graph-arrow-legend {
+  margin: 0; /* フッター内では余白はフッターの padding を使う */
+  height: 100%;           /* フッターの高さに合わせる */
+  display: flex;
+  align-items: center;    /* 垂直センタリング */
+  gap: 0.6rem;
+  padding: 0 0.4rem;      /* 横の余白を小さく */
+  background: transparent; /* フッター背景に合わせる */
+  border: none;           /* フッター内では枠を外す（必要なら変更） */
+  box-shadow: none;
+  max-width: calc(100% - var(--content-left) - 20px);
+  overflow: hidden;
+  white-space: nowrap;
+  transition: margin-left 0.18s ease, max-width 0.18s ease;
+  position: relative;
+  z-index: 1310;
+  font-size: 0.75rem;     /* 高さに合わせて少し小さめに */
+  line-height: 1;
+}
+
+/* 凡例内アイテムをフッター高さにフィットさせる */
+#graph-legend .legend-item,
+#graph-arrow-legend .legend-item {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.4rem;
+  box-sizing: border-box;
+}
+
+/* スワッチ／線サンプルのサイズを抑える */
+#graph-legend .legend-swatch,
+#graph-arrow-legend .legend-swatch {
+  width: 20px;
+  height: 12px;
+}
+#graph-legend .legend-line,
+#graph-arrow-legend .legend-line {
+  width: 40px;
+  border-top-width: 3px;
+}
+
+
+/* 漢字一覧グリッド */
+#kanji-index { padding: 1rem; max-width: 100%; margin: 0.6rem auto 3.6rem; }
+#kanji-index h2 { margin: 0 0 0.6rem 0; font-size: 1.1rem; }
+.kanji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.2rem, 1fr));
+  gap: 0.4rem;
+  align-items: stretch;
+}
+.kanji-cell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:3.2rem;
+  font-size: 1.4rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.kanji-cell:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* サイト概要（漢字一覧の上） */
+.site-summary {
+  background: #ffffff;
+  border: 1px solid #eee;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.03);
+}
+.site-summary h3 { margin: 0 0 0.25rem 0; font-size: 1.05rem; }
+.site-summary h4 { margin: 0.5rem 0 0.25rem 0; font-size: 0.95rem; }
+.site-summary p { margin: 0 0 0.5rem 0; color: #333; line-height: 1.4; }
+.site-summary ul { margin: 0; padding-left: 1.2rem; color: #444; }
+.site-summary li { margin: 0.25rem 0; font-size: 0.95rem; }
+
+/* グラフ凡例: 折返しを無効化し、はみ出す部分を隠す（改行せずに見切る） */
+#graph-legend {
+  max-width: 1200px;
+  margin: 0.8rem auto 2.0rem;
+  padding: 0.6rem 0.8rem;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: nowrap;            /* 折返し無効 */
+  align-items: center;         /* 高さ揃えを中央寄せに変更 */
+  overflow: hidden;            /* はみ出しを隠す */
+  white-space: nowrap;         /* 改行させない */
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 1310;
+}
+.legend-section {
+  min-width: 0; /* 固定幅の代わりに内容で伸縮 */
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* サンプル一覧: ここでも折返しを無効化してはみ出しを隠す */
+.legend-samples {
+  display: flex;
+  flex-direction: row;
+  gap: 0.8rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 単一アイテム: ラベルの長さがあれば省略表示する */
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.15rem 0.25rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 18rem; /* 必要に応じて調整 */
+}
+
+/* ラベル部分を省略表示可能に */
+.legend-label {
+  color: #555;
+  display: inline-block;
+  max-width: 8.5rem; /* ラベル幅制限（必要に応じて調整） */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 文字情報サイドバー */
+#char-sidebar{
+  position: fixed;
+  top: 3.6rem; /* ヘッダ高さに合わせる */
+  left: 0;
+  bottom: 1.6rem; /* フッタ領域を避ける */
+  width: 260px;
+  background: #ffffff;
+  border-right: 1px solid #eee;
+  padding: 0.6rem;
+  overflow:auto;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+  z-index: 1250;
+  font-size: 1rem;
+  /* transform で横移動（画面外へ）させる。幅や表示は変えない */
+  transform: translateX(0);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* トグルボタン（固定配置） */
+#char-sidebar-toggle{
+  position: fixed;
+  top: calc(3.6rem + 8px);
+  left: 260px; /* 展開時はサイドバーの右端に表示 */
+  z-index: 1350;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: left 0.18s ease;
+}
+
+/* mermaid-tree を画面サイズに合わせて固定表示 */
+#mermaid-tree {
+  position: fixed;
+  top: 3.6rem;    /* header height */
+  bottom: 1.6rem; /* footer height */
+  left: 0;
+  right: 0;
+  width: auto;
+  height: auto;
   border: 1px solid #ccc;
   overflow: hidden;
   background: #fafafa;
+  transition: left 0.18s ease, width 0.18s ease;
 }
 
-#status-container {
-  display: flex;
-  justify-content: space-between; /* 左右に配置 */
-  align-items: center; /* 高さを揃える */
-  padding: 2px 8px;
-  font-size: 0.9rem;
+/* サイドバーがあるときの mermaid の位置 */
+body.has-sidebar #mermaid-tree {
+  left: 280px; /* sidebar width (同期) */
 }
 
-#status-bar {
-  flex: 1; /* 左側を広げる */
+/* サイドバーが折りたたまれているときは mermaid を狭い左余白に合わせる（サイドバーを完全に隠さず最小化） */
+body.sidebar-collapsed #char-sidebar {
+  transform: translateX(-100%);
+  box-shadow: none;
+}
+/* 折りたたみ時は mermaid を画面左端まで広げる */
+body.has-sidebar.sidebar-collapsed #mermaid-tree {
+  left: 0;
+}
+/* 折りたたみ時のトグル位置: 左端に表示 */
+body.sidebar-collapsed #char-sidebar-toggle {
+  left: 0;
 }
 
-#credit-link {
-  text-decoration: none;
-  color: #555;
-}
+/* コンテンツ左オフセット用の変数（デフォルト） */
+:root { --content-left: 0px; }
 
-#credit-link:hover {
-  text-decoration: underline;
-  color: #000;
+/* サイドバーの有無でコンテンツ左オフセットを切替 */
+body.has-sidebar { --content-left: 280px; }
+@media (max-width:900px){
+  body.has-sidebar { --content-left: 220px; }
+}
+/* 折りたたみ時はオフセットを 0 に戻す（mermaid を全幅に）*/
+body.sidebar-collapsed { --content-left: 20px; }
+
+/* グラフ凡例を mermaid-tree と水平に揃える */
+#graph-legend, #graph-arrow-legend {
+  /* サイドバーの有無に依存せず、常にフッター内で左寄せ表示する */
+  margin-left: 0;
+  max-width: calc(100% - 40px);
+  transition: max-width 0.18s ease;
+  box-sizing: border-box;
 }

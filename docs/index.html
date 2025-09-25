@@ -3,24 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <title>字源</title>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+
+<link rel="icon" href="./icons/favicon.png" type="image/png">
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+<script src="https://unpkg.com/svg-pan-zoom/dist/svg-pan-zoom.min.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>字源</h1>
 
-<div id="search-bar">
-  検索: <input type="text" id="search-input" placeholder="漢字を入力">
-  <button id="search-btn">検索</button>
-</div>
+<!-- ヘッダ: ロゴ(リロード) と検索 / 全表 を格納 -->
+<header id="site-header">
+  <div class="site-title">
+    <a id="reload" href="#" rel="noopener noreferrer"><img src="./icons/icon.png" alt="字源" class="logo">字源</a><span id="current-character" aria-hidden="true" style="display:none;"></span>
+  </div>
+  <div class="header-controls">
+    <div id="search-bar">
+      検索: <input type="text" id="search-input" placeholder="漢字を入力">
+      <button id="search-btn">検索</button>
+    </div>
+  </div>
+</header>
 
-<div id="mermaid-tree"></div>
-<div id="status-container">
-  <div id="status-bar">x: 0, y: 0, zoom: 1</div>
-  <a id="credit-link" href="https://github.com/rokoukok/jigen" target="_blank" rel="noopener noreferrer">©巨大な口</a>
-</div>
+<!-- 動的挿入用ルート。character がある場合に script.js がここへ mermaid-tree を生成します -->
+<div id="app-root"></div>
 
-<script src="./script.js"></script>
+<!-- フッター: クレジットを表示 -->
+<footer id="site-footer" role="contentinfo">
+  <a id="credit-link" href="https://x.com/73_kanji" target="_blank" rel="noopener noreferrer">©巨大な口</a>
+  <a id="credit">coding by Copilot</a>
+</footer>
+
+<script type="module" src="./js/bootstrap.js"></script>
 </body>
 </html>
