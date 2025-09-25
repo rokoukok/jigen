@@ -20,7 +20,18 @@ try {
   if (reload) {
     reload.addEventListener('click', (e) => {
       e.preventDefault();
-      location.reload();
+      try {
+        // URL のクエリから character を削除してから遷移（履歴を増やさない）
+        const p = new URLSearchParams(window.location.search);
+        p.delete('character');
+        // 正常化した URL を生成
+        const newUrl = `${location.origin}${location.pathname}${p.toString() ? '?'+p.toString() : ''}${location.hash || ''}`;
+        // replace を使って現在の履歴エントリを置換（リロード相当の振る舞い）
+        location.replace(newUrl);
+      } catch (err) {
+        // 万一失敗したら従来通りリロード
+        try { location.reload(); } catch(e2){ /* ignore */ }
+      }
     });
   }
 } catch (e) {

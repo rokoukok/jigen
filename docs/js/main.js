@@ -355,7 +355,9 @@ export async function main(){
              const parsed = parseEraScript(firstPath[0]);
              const eraText = parsed.era || "";
              const scriptText = parsed.script || (descTranslations[firstPath[0].split('/')[0]] || firstPath[0].split('/')[0]);
-             label = `<div class='glyph-box' data-src='images/${firstPath[0]}.png'></div><br>${eraText}<br>${scriptText.replace(/\//g,' ')} ${firstPath[0].split('/')[1] || ''}`;
+            // 重要: foreignObject 内の HTML 要素として正しく扱うために
+            // glyph-box のルート div に XHTML 名前空間を付与する
+            label = `<div xmlns="http://www.w3.org/1999/xhtml" class='glyph-box' data-src='images/${firstPath[0]}.png'></div><br>${eraText}<br>${scriptText.replace(/\//g,' ')} ${firstPath[0].split('/')[1] || ''}`;
            }
            // ノード定義（必ず safeId(gId) を使う）
            // 個々の group ノードは背景色を変更せず、createGroupSubgraph の出力に任せる
@@ -450,8 +452,16 @@ export async function main(){
     });
  
     const { svg } = await mermaid.render('theGraph', mermaidCode);
-    cachedSVG = svg;
-    setCache(cacheKey, svg);
+    // mermaid が生成した SVG 内にある HTML 部分 (<div class="glyph-box"> 等) が
+    // foreignObject として正しく配置されない場合があるため、該当 <div> に
+    // XHTML 名前空間属性を付与してブラウザのレンダリングを安定させる。
+    let svgOut = svg;
+    try {
+      svgOut = svgOut.replace(/<div\s+class=['"]glyph-box['"]/g, '<div xmlns="http://www.w3.org/1999/xhtml" class="glyph-box"');
+      svgOut = svgOut.replace(/<div\s+class=glyph-box\b/g, '<div xmlns="http://www.w3.org/1999/xhtml" class="glyph-box"');
+    } catch(e){ /* ignore */ }
+    cachedSVG = svgOut;
+    setCache(cacheKey, svgOut);
   }
 
   const container=document.getElementById('mermaid-tree');
@@ -547,4 +557,74 @@ export async function main(){
   });
   panZoomInstance.zoom(startZoom);
   panZoomInstance.pan({ x: startX, y: startY });
+
+  // --- 追加: モバイルの二本指ピンチ対応 ---
+  try {
+    // touch-action を無効化してブラウザのピンチズームを阻止（必要に応じてコンテナに設定）
+    const panContainer = container || svgElement.parentNode || document.body;
+    try { panContainer.style.touchAction = 'none'; } catch(e){}
+
+    let isPinching = false;
+    let pinchStartDist = 0;
+    let pinchStartZoom = 1;
+    let pinchStartPan = { x: 0, y: 0 };
+    // midpoint は SVG 内の座標系（boundingClientRect原点ベース）を使う
+    function touchDistance(t1, t2){ const dx = t1.clientX - t2.clientX; const dy = t1.clientY - t2.clientY; return Math.hypot(dx,dy); }
+    function touchMidpoint(t1, t2, rect){ return { x: (t1.clientX + t2.clientX)/2 - rect.left, y: (t1.clientY + t2.clientY)/2 - rect.top }; }
+
+    svgElement.addEventListener('touchstart', (ev) => {
+      if(ev.touches && ev.touches.length === 2){
+        ev.preventDefault();
+        isPinching = true;
+        const t1 = ev.touches[0], t2 = ev.touches[1];
+        pinchStartDist = touchDistance(t1,t2);
+        pinchStartZoom = panZoomInstance.getZoom();
+        pinchStartPan = panZoomInstance.getPan();
+      }
+    }, { passive: false });
+
+    svgElement.addEventListener('touchmove', (ev) => {
+      if(!isPinching) return;
+      if(!ev.touches || ev.touches.length !== 2) return;
+      ev.preventDefault();
+      const t1 = ev.touches[0], t2 = ev.touches[1];
+      const curDist = touchDistance(t1,t2);
+      if(pinchStartDist <= 0) return;
+      const scale = curDist / pinchStartDist;
+      const newZoom = Math.max(panZoomInstance.getMinZoom ? panZoomInstance.getMinZoom() : 0.5,
+                        Math.min(panZoomInstance.getMaxZoom ? panZoomInstance.getMaxZoom() : 20, pinchStartZoom * scale));
+
+      // 中点を固定するための pan 計算（SVG の bounding box を基準に）
+      const rect = svgElement.getBoundingClientRect();
+      const mid = touchMidpoint(t1,t2,rect);
+      // startPan はピンチ開始時点の pan（SVG 内ピクセル）で取得済み
+      const sPan = pinchStartPan;
+      const sZoom = pinchStartZoom;
+      // newPan = (sPan - mid) * (newZoom/sZoom) + mid
+      const newPan = {
+        x: (sPan.x - mid.x) * (newZoom / (sZoom || 1)) + mid.x,
+        y: (sPan.y - mid.y) * (newZoom / (sZoom || 1)) + mid.y
+      };
+
+      // 適用
+      try {
+        panZoomInstance.zoom(newZoom);
+        panZoomInstance.pan(newPan);
+      } catch(e){
+        // 安全に無視
+      }
+    }, { passive: false });
+
+    const endPinch = (ev) => {
+      if(isPinching){
+        isPinching = false;
+        pinchStartDist = 0;
+      }
+    };
+    svgElement.addEventListener('touchend', endPinch, { passive: true });
+    svgElement.addEventListener('touchcancel', endPinch, { passive: true });
+  } catch(e){
+    // ignore
+  }
+  // --- /追加 ---
 }
